@@ -2,7 +2,11 @@
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import Auth from "@/handlers/auth";
+import { Interceptor } from "@/lib/interceptor";
+import { LocalStorage } from "@/lib/localStorage";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "../ui/button";
@@ -14,6 +18,8 @@ const loginSchema = z.object({
 })
 
 export default function LoginForm() {
+	const [loading, setLoading] = useState(false);
+	const [user, setUser] = useState<any | null>()
 	const form = useForm<z.infer<typeof loginSchema>>({
 		resolver: zodResolver(loginSchema),
 		defaultValues: {
@@ -22,8 +28,28 @@ export default function LoginForm() {
 		}
 	})
 
-	function onSubmit(values: z.infer<typeof loginSchema>) {
+	async function onSubmit(values: z.infer<typeof loginSchema>) {
 		console.log({ values });
+
+		const requestPayload = {
+			email: values.email,
+			password: values.password
+		}
+
+		await Interceptor.handleApi(
+			async () => await Auth.login(requestPayload),
+			setLoading,
+			(res) => {
+				console.log({ res })
+				setUser && setUser(res);
+				LocalStorage.set("user", res?.data ?? null)
+				LocalStorage.set("token", res?.data.accessToken ?? null)
+			}
+		);
+	}
+
+	if (loading) {
+		return "loading...."
 	}
 
 	return (

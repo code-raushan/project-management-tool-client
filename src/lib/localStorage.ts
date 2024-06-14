@@ -1,6 +1,7 @@
+'use client'
 export class LocalStorage {
     static get(key: string) {
-        const value = localStorage.get(key);
+        const value = localStorage.getItem(key);
         if (value) {
             return JSON.parse(value);
         }

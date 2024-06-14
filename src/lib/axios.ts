@@ -1,8 +1,15 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
+import { SuccessResponse } from "@/interfaces/api";
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import { toast } from "react-toastify";
 import { LocalStorage } from "./localStorage";
 
 class ApiClient {
   constructor() {
+    this._get = this._get.bind(this)
+    this._post = this._post.bind(this)
+    this._patch = this._patch.bind(this)
+    this._put = this._put.bind(this)
+    this._delete = this._delete.bind(this)
   }
 
   _getClient(baseURL?: string): AxiosInstance {
@@ -13,7 +20,7 @@ class ApiClient {
     apiClient.interceptors.request.use(
       async (config) => {
         const user = LocalStorage.get("user");
-        const token = user.token;
+        const token = user?.token;
 
         if (token && config.headers) {
           config.headers.Authorization = `Bearer ${token}`;
@@ -22,6 +29,45 @@ class ApiClient {
       },
       err => {
         return Promise.reject(err);
+      }
+    )
+
+    apiClient.interceptors.response.use(
+      // @ts-ignore
+      async (
+        response: AxiosResponse<SuccessResponse, any>
+      ): Promise<[SuccessResponse, undefined]> => {
+        return [response.data, undefined]
+      },
+      (err): [undefined, string] => {
+        if (err.response.data) {
+          if (err?.response?.status === 401) {
+            LocalStorage.clear()
+            // window.location.href = '/login'
+          }
+          if (!err.response.data?.success) {
+            if (
+              err.response.data.message ||
+              err.response.data.msg ||
+              err.response.data.error
+            ) {
+              // LocalStorage.get('user') &&
+              toast.error(
+                // err.response.data.message ||
+                err.response.data.msg || err.response.data.error
+              )
+            } else {
+              toast.error('Something went wrong')
+            }
+            return [
+              undefined,
+              err.response.data.message || err.response.data.msg,
+            ]
+          }
+        } else {
+          console.log(err.response)
+        }
+        return [undefined, 'Request config error']
       }
     )
 
