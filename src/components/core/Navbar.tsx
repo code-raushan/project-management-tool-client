@@ -3,16 +3,16 @@ import Link from "next/link";
 
 const Navbar = () => {
 
-    return (
-        <nav className='flex justify-between items-center py-5 px-20 border-b'>
-            <Link href='/' className='text-xl font-semibold'>
-                <span>Project Management Tool</span>
-            </Link>
-            <div className='flex gap-5 items-center'>
-                <ThemeMode />
-            </div>
-        </nav>
-    );
+  return (
+    <nav className='flex justify-end md:justify-between items-center py-2 px-10 md:py-5 md:px-20 border-b'>
+      <Link href='/' className='text-xl font-semibold hidden md:block'>
+        <span>Project Management Tool</span>
+      </Link>
+      <div className='flex gap-5 items-center'>
+        <ThemeMode />
+      </div>
+    </nav>
+  );
 };
 
 export default Navbar;
