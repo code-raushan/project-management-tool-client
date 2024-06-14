@@ -11,6 +11,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../ui/card";
+import { useToast } from "../ui/use-toast";
 
 const loginSchema = z.object({
 	email: z.string(),
@@ -19,7 +20,8 @@ const loginSchema = z.object({
 
 export default function LoginForm() {
 	const [loading, setLoading] = useState(false);
-	const [user, setUser] = useState<any | null>()
+	const [user, setUser] = useState<any | null>();
+	const { toast } = useToast();
 	const form = useForm<z.infer<typeof loginSchema>>({
 		resolver: zodResolver(loginSchema),
 		defaultValues: {
@@ -41,8 +43,16 @@ export default function LoginForm() {
 			setLoading,
 			(res) => {
 				setUser && setUser(res);
-				LocalStorage.set("user", res?.data ?? null)
-				LocalStorage.set("token", res?.data.accessToken ?? null)
+				LocalStorage.set("user", res?.data ?? null);
+				LocalStorage.set("token", res?.data.accessToken ?? null);
+				toast({
+					description: "Successfully logged in"
+				})
+			},
+			() => {
+				toast({
+					description: "invalid email or password"
+				})
 			}
 		);
 

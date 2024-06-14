@@ -42,7 +42,8 @@ class ApiClient {
       (err): [undefined, string] => {
         if (err.response.data) {
           if (err?.response?.status === 401) {
-            LocalStorage.clear()
+            LocalStorage.clear();
+            toast.error(JSON.stringify(err?.response.data.error))
             // window.location.href = '/login'
           }
           if (!err.response.data?.success) {
