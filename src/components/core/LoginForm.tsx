@@ -40,12 +40,13 @@ export default function LoginForm() {
 			async () => await Auth.login(requestPayload),
 			setLoading,
 			(res) => {
-				console.log({ res })
 				setUser && setUser(res);
 				LocalStorage.set("user", res?.data ?? null)
 				LocalStorage.set("token", res?.data.accessToken ?? null)
 			}
 		);
+
+		form.reset();
 	}
 
 	if (loading) {
