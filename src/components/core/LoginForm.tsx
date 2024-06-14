@@ -6,6 +6,8 @@ import Auth from "@/handlers/auth";
 import { Interceptor } from "@/lib/interceptor";
 import { LocalStorage } from "@/lib/localStorage";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { LoaderIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -14,13 +16,14 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../ui/card
 import { useToast } from "../ui/use-toast";
 
 const loginSchema = z.object({
-	email: z.string(),
-	password: z.string(),
+	email: z.string().min(1, "email cannot be empty"),
+	password: z.string().min(1, "password cannot be empty"),
 })
 
 export default function LoginForm() {
 	const [loading, setLoading] = useState(false);
 	const [user, setUser] = useState<any | null>();
+	const router = useRouter();
 	const { toast } = useToast();
 	const form = useForm<z.infer<typeof loginSchema>>({
 		resolver: zodResolver(loginSchema),
@@ -28,7 +31,7 @@ export default function LoginForm() {
 			email: "",
 			password: ""
 		}
-	})
+	});
 
 	async function onSubmit(values: z.infer<typeof loginSchema>) {
 		console.log({ values });
@@ -47,12 +50,15 @@ export default function LoginForm() {
 				LocalStorage.set("token", res?.data.accessToken ?? null);
 				toast({
 					description: "Successfully logged in"
-				})
+				});
+				router.push("/")
+
 			},
 			() => {
 				toast({
 					description: "invalid email or password"
-				})
+				});
+				router.push("/login");
 			}
 		);
 
@@ -60,7 +66,7 @@ export default function LoginForm() {
 	}
 
 	if (loading) {
-		return "loading...."
+		return <LoaderIcon className="animate-spin" />
 	}
 
 	return (

@@ -1,10 +1,9 @@
-import LoginForm from "@/components/core/LoginForm";
 
 export default function Home() {
   return (
     <main>
       <div className="pt-4">
-        <LoginForm />
+        <h1>Hi, I am Raushan</h1>
       </div>
     </main>
   );
