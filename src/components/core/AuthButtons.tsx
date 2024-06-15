@@ -6,10 +6,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
+import { useToast } from "../ui/use-toast";
 
 const AuthButton = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
+  const { toast } = useToast();
 
   useEffect(() => {
     const checkLoginStatus = () => {
@@ -33,6 +35,9 @@ const AuthButton = () => {
   const handleLogout = () => {
     LocalStorage.remove("token");
     window.dispatchEvent(new Event("logout"));
+    toast({
+      description: "Logged Out Successfully",
+    });
     router.push("/login");
   };
 
