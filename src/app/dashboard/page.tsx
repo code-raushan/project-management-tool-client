@@ -1,7 +1,7 @@
 "use client";
 
 import ProtectedRoute from "@/components/core/ProtectedRoute";
-import Works from "@/components/core/Works";
+import WorksForm from "@/components/core/WorksForm";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -44,7 +44,7 @@ export default function Dashboard() {
           <ResizablePanel className="min-h-[100%]">
             {selected === "works" && (
               <div className="px-4 py-10">
-                <Works />
+                <WorksForm />
               </div>
             )}
             {selected === "others" && (

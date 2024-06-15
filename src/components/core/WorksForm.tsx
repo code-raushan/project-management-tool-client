@@ -47,7 +47,6 @@ export default function Works() {
   });
 
   async function onSubmit(values: z.infer<typeof workSchema>) {
-    //console.log({ startDate: getDateInYYYYMMDD(String(values.startDate)) });
     const requestPayload = {
       title: values.title,
       startDate: format(values.startDate, "yyyy-MM-dd"),
