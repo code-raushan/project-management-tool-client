@@ -19,6 +19,10 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     const checkAuth = () => {
       const token = LocalStorage.get("token");
       if (!token) {
+        toast({
+          title: "Session Expired",
+          description: "Please login again",
+        });
         router.push("/login"); // Redirect to login if no token is found
       } else {
         setIsAuthenticated(true);
@@ -29,11 +33,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   }, [router]);
 
   if (!isAuthenticated) {
-    toast({
-      title: "Session Expired",
-      description: "Please login again",
-    });
-
     return (
       <div className="flex justify-center items-center min-h-[90vh] min-w-[100vw]">
         <LoaderIcon size={24} className="animate-spin" />
