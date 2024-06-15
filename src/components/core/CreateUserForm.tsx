@@ -46,7 +46,7 @@ export default function CreateUserForm() {
     address: z.string().min(3, "cannot be less than 3 letters").optional(),
     isdCode: z.string().min(1, "cannot be empty").optional(),
     phoneNumber: z.string().min(1, "cannot be empty").optional(),
-    role: z.enum(["admin", "subordinate"]),
+    role: z.enum(["supervisor", "contractor"]),
   });
 
   const form = useForm<z.infer<typeof createUserSchema>>({
@@ -225,9 +225,11 @@ export default function CreateUserForm() {
                         <SelectValue placeholder="Select role" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value={UserRole.ADMIN}>Admin</SelectItem>
-                        <SelectItem value={UserRole.SUBORDINATE}>
-                          Subordinate
+                        <SelectItem value={UserRole.SUPERVISOR}>
+                          Supervisor
+                        </SelectItem>
+                        <SelectItem value={UserRole.CONTRACTOR}>
+                          Contractor
                         </SelectItem>
                       </SelectContent>
                     </Select>

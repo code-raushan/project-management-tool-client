@@ -4,7 +4,7 @@ import AuthButtons from "./AuthButtons";
 
 const Navbar = () => {
   return (
-    <nav className="flex justify-end md:justify-between items-center py-2 px-10 md:py-5 md:px-20 border-b">
+    <nav className="flex justify-end md:justify-between items-center py-2 px-10 md:py-5 md:px-20 border-b border-gray-600">
       <Link href="/" className="text-xl font-semibold hidden md:block">
         <span>Project Management Tool</span>
       </Link>
