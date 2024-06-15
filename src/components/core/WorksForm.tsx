@@ -68,6 +68,8 @@ export default function Works() {
         });
       }
     );
+
+    form.reset();
   }
 
   const form = useForm<z.infer<typeof workSchema>>({
