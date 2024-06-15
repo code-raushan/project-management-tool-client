@@ -29,7 +29,7 @@ import {
 import { useToast } from "../ui/use-toast";
 
 const loginSchema = z.object({
-  email: z.string().min(1, "email cannot be empty"),
+  email: z.string().email().min(1, "email cannot be empty"),
   password: z.string().min(1, "password cannot be empty"),
 });
 
@@ -61,6 +61,9 @@ export default function LoginForm() {
         setUser && setUser(res);
         LocalStorage.set("user", res?.data ?? null);
         LocalStorage.set("token", res?.data.accessToken ?? null);
+
+        window.dispatchEvent(new Event("login"));
+
         toast({
           description: "Successfully logged in",
         });
