@@ -49,8 +49,8 @@ export default function Works() {
   async function onSubmit(values: z.infer<typeof workSchema>) {
     const requestPayload = {
       title: values.title,
-      startDate: format(values.startDate, "yyyy-MM-dd"),
-      endDate: format(values.endDate, "yyyy-MM-dd"),
+      startDate: format(values.startDate, "dd-MM-yyyy"),
+      endDate: format(values.endDate, "dd-MM-yyyy"),
     };
 
     await Interceptor.handleApi(

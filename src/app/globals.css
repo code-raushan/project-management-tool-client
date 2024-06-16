@@ -74,3 +74,24 @@
     @apply bg-background text-foreground;
   }
 }
+
+.reactgrid .rg-column-header {
+  cursor: col-resize;
+}
+
+.reactgrid .rg-column-header,
+.reactgrid .rg-cell {
+  white-space: nowrap;
+  overflow: scroll;
+  text-overflow: ellipsis;
+}
+
+.reactgrid .rg-column-header {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+
+.reactgrid .rg-cell {
+  background-color: #1111;
+  border-color: black;
+}
