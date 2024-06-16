@@ -4,6 +4,7 @@ import Work from "@/handlers/work";
 import { Interceptor } from "@/lib/interceptor";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { LoaderIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   Card,
@@ -31,6 +32,7 @@ export default function WorksList() {
   const [list, setList] = useState<IWorks[]>([]);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -63,7 +65,11 @@ export default function WorksList() {
       <ScrollArea className="w-full h-[500px] p-4 overflow-y-auto">
         {list.length ? (
           list.map((item) => (
-            <Card key={item._id} className="mb-4 shadow-md">
+            <Card
+              key={item._id}
+              className="mb-4 shadow-md cursor-pointer"
+              onClick={() => router.push(`/work/${item._id}`)}
+            >
               <div className="flex justify-between items-center p-4">
                 <CardHeader className="flex-shrink-0">
                   <CardTitle>{item.title}</CardTitle>

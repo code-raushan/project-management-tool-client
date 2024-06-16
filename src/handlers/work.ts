@@ -21,5 +21,9 @@ class Work {
       },
     });
   }
+
+  static async getWorkDetails(id: string) {
+    return get(`/work/${id}`);
+  }
 }
 export default Work;
