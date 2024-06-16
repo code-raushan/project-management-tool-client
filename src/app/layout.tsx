@@ -1,3 +1,4 @@
+import { ContextProvider } from "@/components/core/ContextProvider";
 import Navbar from "@/components/core/Navbar";
 import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
@@ -9,7 +10,8 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Project Management Tool",
-  description: "A tool for project management and much more built using Next.js",
+  description:
+    "A tool for project management and much more built using Next.js",
 };
 
 export default function RootLayout({
@@ -20,16 +22,18 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ThemeProvider
-          attribute='class'
-          defaultTheme='dark'
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Navbar />
-          {children}
-          <Toaster />
-        </ThemeProvider>
+        <ContextProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Navbar />
+            {children}
+            <Toaster />
+          </ThemeProvider>
+        </ContextProvider>
       </body>
     </html>
   );

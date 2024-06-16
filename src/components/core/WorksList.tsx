@@ -1,11 +1,12 @@
 "use client";
 
 import Work from "@/handlers/work";
+import { Context } from "@/lib/context";
 import { Interceptor } from "@/lib/interceptor";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { LoaderIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -33,6 +34,7 @@ export default function WorksList() {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
+  const { setSelectedWork } = useContext(Context);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,6 +55,11 @@ export default function WorksList() {
     fetchData();
   }, []);
 
+  const handleClick = (item: IWorks) => {
+    setSelectedWork(item);
+    router.push(`/work/${item._id}`);
+  };
+
   if (loading)
     return (
       <div className="w-full h-[50vh] flex justify-center items-center">
@@ -68,7 +75,7 @@ export default function WorksList() {
             <Card
               key={item._id}
               className="mb-4 shadow-md cursor-pointer"
-              onClick={() => router.push(`/work/${item._id}`)}
+              onClick={() => handleClick(item)}
             >
               <div className="flex justify-between items-center p-4">
                 <CardHeader className="flex-shrink-0">
