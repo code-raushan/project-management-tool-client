@@ -2,15 +2,17 @@
 
 import ProtectedRoute from "@/components/core/ProtectedRoute";
 import WorksForm from "@/components/core/WorksForm";
+import WorksList from "@/components/core/WorksList";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
 
 export default function Dashboard() {
-  const [selected, setSelected] = useState("others");
+  const [selected, setSelected] = useState("works");
   return (
     <ProtectedRoute>
       <main className="min-h-[90vh] min-w-[100vw]">
@@ -45,6 +47,8 @@ export default function Dashboard() {
             {selected === "works" && (
               <div className="px-4 py-10">
                 <WorksForm />
+                <Separator className="mt-10" />
+                <WorksList />
               </div>
             )}
             {selected === "others" && (

@@ -70,6 +70,7 @@ export default function Works() {
     );
 
     form.reset();
+    window.location.reload();
   }
 
   const form = useForm<z.infer<typeof workSchema>>({
@@ -127,7 +128,7 @@ export default function Works() {
                         <PopoverContent
                           className={`w-auto p-0  ${
                             theme === "dark" ? "bg-black" : "bg-white"
-                          } shadow-md rounded-md`}
+                          } shadow-md rounded-md z-50`}
                           align="start"
                         >
                           <Calendar
@@ -174,7 +175,7 @@ export default function Works() {
                         <PopoverContent
                           className={`w-auto p-0  ${
                             theme === "dark" ? "bg-black" : "bg-white"
-                          } shadow-md rounded-md`}
+                          } shadow-md rounded-md z-50`}
                           align="start"
                         >
                           <Calendar
