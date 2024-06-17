@@ -47,7 +47,28 @@ export default function ActivitiesSheet({ workId }: { workId: string }) {
         async () => Work.getWorkDetails(id),
         setLoading,
         (res) => {
-          setSelectedWork(res.data);
+          const workDetails = res.data;
+          setSelectedWork(workDetails);
+
+          console.log({ workDetails });
+
+          // Map the retrieved activities to the Activity interface
+          const mappedActivities = workDetails.activities.map(
+            (activity: any) => {
+              const dates: { [key: string]: string } = {};
+              activity.assignedDates.forEach((date: string) => {
+                dates[date] = "Scheduled";
+              });
+              return {
+                activityRef: activity.activityRef,
+                activityDescription: activity.activityDescription,
+                dates,
+              };
+            }
+          );
+          setActivities(mappedActivities);
+
+          console.log({ activities });
         },
         () => {
           toast({
@@ -97,9 +118,10 @@ export default function ActivitiesSheet({ workId }: { workId: string }) {
       return {
         activityRef: activity.activityRef,
         activityDescription: activity.activityDescription,
-        assignedDates: scheduledDatesForActivity.map(
-          (dates) => dates.split(" ")[0]
-        ),
+        // assignedDates: scheduledDatesForActivity.map(
+        //   (dates) => dates.split(" ")[0]
+        // ),
+        assignedDates: scheduledDatesForActivity,
       };
     });
 
@@ -116,7 +138,7 @@ export default function ActivitiesSheet({ workId }: { workId: string }) {
       setUploadActivitiesLoading,
       (_res) => {
         toast({
-          description: "uploaded activities successfully",
+          description: "Uploaded activities successfully",
         });
       },
       () => {
@@ -169,7 +191,7 @@ export default function ActivitiesSheet({ workId }: { workId: string }) {
               {workDates.map((date) => (
                 <TableCell key={date} className="border border-white">
                   <Select
-                    value={activity.dates[date] || ""}
+                    value={activity.dates[date] || "Not Scheduled"}
                     onValueChange={(value) =>
                       handleSelectChange(index, date, value)
                     }

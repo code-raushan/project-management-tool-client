@@ -1,6 +1,7 @@
 "use client";
 
 import ActivitiesSheet from "@/components/core/ActivitiesSheet";
+import { IWorks } from "@/components/core/WorksList";
 import {
   Card,
   CardContent,
@@ -8,8 +9,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Context } from "@/lib/context";
-import { useContext } from "react";
+import { useToast } from "@/components/ui/use-toast";
+import Work from "@/handlers/work";
+import { Interceptor } from "@/lib/interceptor";
+import { useEffect, useState } from "react";
 
 export default function WorkDetailsPage({
   params,
@@ -18,7 +21,29 @@ export default function WorkDetailsPage({
 }) {
   const { id } = params;
 
-  const { selectedWork } = useContext(Context);
+  const { toast } = useToast();
+  const [selectedWork, setSelectedWork] = useState<IWorks | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async (id: string) => {
+      await Interceptor.handleApi(
+        async () => Work.getWorkDetails(id),
+        setLoading,
+        (res) => {
+          const workDetails = res.data;
+          setSelectedWork(workDetails);
+        },
+        () => {
+          toast({
+            description: "Failed to load the works",
+          });
+        }
+      );
+    };
+    fetchData(id);
+  }, [id, toast]);
+
   if (!selectedWork) {
     return <h1>Not found</h1>;
   }

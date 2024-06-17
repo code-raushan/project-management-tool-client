@@ -90,7 +90,8 @@ export function getDatesBetween(startDate: string, endDate: string) {
     let weekday = weekdays[start.getDay()];
 
     // Add formatted date to the array
-    dateArray.push(`${day}-${month}-${year} (${weekday})`);
+    // dateArray.push(`${day}-${month}-${year} (${weekday})`);
+    dateArray.push(`${day}-${month}-${year}`);
 
     // Move to the next day
     start.setDate(start.getDate() + 1);
