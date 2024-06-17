@@ -52,3 +52,49 @@ export function getDateInDDMMYYYY(): string {
   const formattedToday = date + "/" + month + "/" + yyyy;
   return formattedToday;
 }
+export function getDatesBetween(startDate: string, endDate: string) {
+  console.log({ startDate, endDate });
+  // Helper function to parse a date in DD-MM-YYYY format
+
+  function parseDate(dateStr: string) {
+    let [day, month, year] = dateStr.split("-").map(Number);
+    return new Date(year, month - 1, day);
+  }
+
+  // Parse the input dates
+  let start = parseDate(startDate);
+  let end = parseDate(endDate);
+
+  // Array of weekday names
+  const weekdays = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+
+  // Initialize an array to hold the dates
+  let dateArray = [];
+
+  // Generate dates between the start and end date
+  while (start <= end) {
+    // Format the date as DD-MM-YYYY
+    let day = String(start.getDate()).padStart(2, "0");
+    let month = String(start.getMonth() + 1).padStart(2, "0");
+    let year = start.getFullYear();
+
+    // Get the weekday
+    let weekday = weekdays[start.getDay()];
+
+    // Add formatted date to the array
+    dateArray.push(`${day}-${month}-${year} (${weekday})`);
+
+    // Move to the next day
+    start.setDate(start.getDate() + 1);
+  }
+
+  return dateArray;
+}

@@ -25,5 +25,21 @@ class Work {
   static async getWorkDetails(id: string) {
     return get(`/work/${id}`);
   }
+
+  static async addActivites(params: {
+    workId: string;
+    activities: {
+      activityRef: string;
+      activityDescription: string;
+      assignedDates: string[];
+    }[];
+  }) {
+    const { workId, ...rest } = params;
+    return post(`/work/add/activities/${workId}`, params, {
+      headers: {
+        Authorization: `Bearer ${LocalStorage.get("token")}`,
+      },
+    });
+  }
 }
 export default Work;
