@@ -1,4 +1,4 @@
-import { get, post } from "@/lib/axios";
+import { del, get, post } from "@/lib/axios";
 import { LocalStorage } from "@/lib/localStorage";
 
 class Work {
@@ -36,6 +36,15 @@ class Work {
   }) {
     const { workId, ...rest } = params;
     return post(`/work/add/activities/${workId}`, params, {
+      headers: {
+        Authorization: `Bearer ${LocalStorage.get("token")}`,
+      },
+    });
+  }
+
+  static async deleteWork(id: string) {
+    console.log({ id });
+    return del(`/work/${id}`, {
       headers: {
         Authorization: `Bearer ${LocalStorage.get("token")}`,
       },

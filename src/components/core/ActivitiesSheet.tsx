@@ -242,7 +242,7 @@ export default function ActivitiesSheet({ workId }: { workId: string }) {
         <TableFooter>
           <TableRow>
             <TableCell colSpan={2} className="border border-white">
-              Total Activities
+              Total
             </TableCell>
             <TableCell colSpan={4} className="text-right border border-white">
               {activities.length}
