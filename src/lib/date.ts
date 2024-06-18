@@ -90,12 +90,35 @@ export function getDatesBetween(startDate: string, endDate: string) {
     let weekday = weekdays[start.getDay()];
 
     // Add formatted date to the array
-    // dateArray.push(`${day}-${month}-${year} (${weekday})`);
-    dateArray.push(`${day}-${month}-${year}`);
+    dateArray.push(`${day}-${month}-${year} (${weekday})`);
+    // dateArray.push(`${day}-${month}-${year}`);
 
     // Move to the next day
     start.setDate(start.getDate() + 1);
   }
 
   return dateArray;
+}
+
+export function getWeekDay(date: string) {
+  const weekdays = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+
+  function parseDate(dateStr: string) {
+    let [day, month, year] = dateStr.split("-").map(Number);
+    return new Date(year, month - 1, day);
+  }
+
+  let parsedDate = parseDate(date);
+
+  let weekday = weekdays[parsedDate.getDay()];
+
+  return weekday;
 }

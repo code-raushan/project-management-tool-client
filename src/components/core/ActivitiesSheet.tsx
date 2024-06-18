@@ -8,7 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"; // Import custom Select component
 import Work from "@/handlers/work";
-import { getDatesBetween } from "@/lib/date";
+import { getDatesBetween, getWeekDay } from "@/lib/date";
 import { Interceptor } from "@/lib/interceptor";
 import { useEffect, useState } from "react";
 import {
@@ -50,14 +50,12 @@ export default function ActivitiesSheet({ workId }: { workId: string }) {
           const workDetails = res.data;
           setSelectedWork(workDetails);
 
-          console.log({ workDetails });
-
           // Map the retrieved activities to the Activity interface
           const mappedActivities = workDetails.activities.map(
             (activity: any) => {
               const dates: { [key: string]: string } = {};
               activity.assignedDates.forEach((date: string) => {
-                dates[date] = "Scheduled";
+                dates[`${date} (${getWeekDay(date)})`] = "Scheduled";
               });
               return {
                 activityRef: activity.activityRef,
@@ -67,8 +65,6 @@ export default function ActivitiesSheet({ workId }: { workId: string }) {
             }
           );
           setActivities(mappedActivities);
-
-          console.log({ activities });
         },
         () => {
           toast({
@@ -83,7 +79,17 @@ export default function ActivitiesSheet({ workId }: { workId: string }) {
   const workDates = selectedWork
     ? getDatesBetween(selectedWork.startDate, selectedWork.endDate)
     : [];
-  const columnLabels = ["Activity REF", "Activity Description", ...workDates];
+
+  const weeks = workDates.reduce((acc, date, index) => {
+    const weekIndex = Math.floor(index / 7);
+    if (!acc[weekIndex]) {
+      acc[weekIndex] = [];
+    }
+    acc[weekIndex].push(date);
+    return acc;
+  }, [] as string[][]);
+
+  const weekLabels = weeks.map((_, index) => `Week ${index + 1}`);
 
   const handleAddRow = () => {
     setActivities([
@@ -111,23 +117,24 @@ export default function ActivitiesSheet({ workId }: { workId: string }) {
       ...workDates.map((date) => activity.dates[date] || ""),
     ]);
 
-    const newActivitiesInformation = activities.map((activity) => {
+    const activitiesInformation = activities.map((activity) => {
       const scheduledDatesForActivity = workDates.filter(
         (date) => activity.dates[date] === "Scheduled"
       );
       return {
         activityRef: activity.activityRef,
         activityDescription: activity.activityDescription,
-        // assignedDates: scheduledDatesForActivity.map(
-        //   (dates) => dates.split(" ")[0]
-        // ),
-        assignedDates: scheduledDatesForActivity,
+        assignedDates: scheduledDatesForActivity.map(
+          (date) => date.split(" ")[0]
+        ),
       };
     });
 
-    console.log("Matrix Data:", matrixData);
-    console.log("New Activities Information:", newActivitiesInformation);
-    // You can also handle the matrixData and scheduledDates here (e.g., send them to an API)
+    const newActivitiesInformation = activitiesInformation.filter(
+      (activity) =>
+        activity.activityDescription.trim() !== "" &&
+        activity.activityRef.trim() !== ""
+    );
 
     await Interceptor.handleApi(
       async () =>
@@ -158,9 +165,29 @@ export default function ActivitiesSheet({ workId }: { workId: string }) {
         <TableCaption>Activities Table</TableCaption>
         <TableHeader>
           <TableRow>
-            {columnLabels.map((label, index) => (
+            <TableCell colSpan={6} className="border border-white">
+              <div className="flex justify-center">Activity Details</div>
+            </TableCell>
+            {weekLabels.map((label, index) => (
+              <TableCell
+                key={index}
+                colSpan={weeks[index].length}
+                className="border border-white"
+              >
+                <div className="flex justify-center">{label}</div>
+              </TableCell>
+            ))}
+          </TableRow>
+          <TableRow>
+            <TableCell colSpan={2} className="border border-white">
+              Activity REF
+            </TableCell>
+            <TableCell colSpan={4} className="border border-white">
+              Activity Description
+            </TableCell>
+            {workDates.map((date, index) => (
               <TableCell key={index} className="border border-white">
-                {label}
+                {date}
               </TableCell>
             ))}
           </TableRow>
@@ -168,7 +195,7 @@ export default function ActivitiesSheet({ workId }: { workId: string }) {
         <TableBody>
           {activities.map((activity, index) => (
             <TableRow key={index}>
-              <TableCell className="border border-white">
+              <TableCell colSpan={2} className="border border-white">
                 <Input
                   value={activity.activityRef}
                   onChange={(e: { target: { value: string } }) =>
@@ -176,7 +203,7 @@ export default function ActivitiesSheet({ workId }: { workId: string }) {
                   }
                 />
               </TableCell>
-              <TableCell className="border border-white">
+              <TableCell colSpan={4} className="border border-white">
                 <Input
                   value={activity.activityDescription}
                   onChange={(e: { target: { value: string } }) =>
@@ -214,8 +241,10 @@ export default function ActivitiesSheet({ workId }: { workId: string }) {
         </TableBody>
         <TableFooter>
           <TableRow>
-            <TableCell colSpan={2}>Total Activities</TableCell>
-            <TableCell colSpan={workDates.length} className="text-right">
+            <TableCell colSpan={2} className="border border-white">
+              Total Activities
+            </TableCell>
+            <TableCell colSpan={4} className="text-right border border-white">
               {activities.length}
             </TableCell>
           </TableRow>
