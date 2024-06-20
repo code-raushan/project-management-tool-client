@@ -43,12 +43,15 @@ class Work {
   }
 
   static async deleteWork(id: string) {
-    console.log({ id });
     return del(`/work/${id}`, {
       headers: {
         Authorization: `Bearer ${LocalStorage.get("token")}`,
       },
     });
+  }
+
+  static async getActivitiesByDate(date: string) {
+    return get(`/work/activities?date=${date}`);
   }
 }
 export default Work;

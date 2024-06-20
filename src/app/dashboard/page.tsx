@@ -1,6 +1,7 @@
 "use client";
 
 import ProtectedRoute from "@/components/core/ProtectedRoute";
+import SupervisionSheet from "@/components/core/SupervisionSheet";
 import WorksForm from "@/components/core/WorksForm";
 import WorksList from "@/components/core/WorksList";
 import {
@@ -37,7 +38,7 @@ export default function Dashboard() {
                 onClick={() => setSelected("others")}
               >
                 <h1 className="text-xl text-gray-800 font-semibold">
-                  Others List
+                  Supervisor's List
                 </h1>
               </div>
             </div>
@@ -53,7 +54,7 @@ export default function Dashboard() {
             )}
             {selected === "others" && (
               <div className="px-4 py-10">
-                <h1>other one is selected</h1>
+                <SupervisionSheet />
               </div>
             )}
           </ResizablePanel>
