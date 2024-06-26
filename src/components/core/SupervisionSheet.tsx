@@ -271,13 +271,14 @@ interface IWorkData {
     comment?: string;
   }[];
 }
+
 interface ActivityStatus {
   date?: string;
   status?: string;
   comment?: string;
 }
 
-interface Activity {
+export interface Activity {
   activityId: string;
   activityRef: string;
   activityDescription: string;
@@ -354,11 +355,23 @@ const SupervisionSheet: React.FC = () => {
     getData("19-06-2024");
   }, [toast]);
 
+  // useEffect(() => {
+  //   console.log("Data updated:", data);
+  // }, [data]);
+
+  // useEffect(() => {
+  //   console.log("TransformedData updated:", transformedData);
+  // }, [transformedData]);
+
   // const handleStatusChange = (
   //   workId: string,
   //   activityId: string,
   //   newStatus: string
   // ) => {
+  //   const tempData = data;
+
+  //   console.log({ workId, activityId, newStatus });
+
   //   setData((prevData) =>
   //     prevData.map((work) =>
   //       work.workId === workId
@@ -368,11 +381,18 @@ const SupervisionSheet: React.FC = () => {
   //               activity.activityId === activityId
   //                 ? {
   //                     ...activity,
-  //                     activityStatus: activity.activityStatus.map((status) =>
-  //                       status.date === work.date
-  //                         ? { ...status, status: newStatus }
-  //                         : status
-  //                     ),
+  //                     activityStatus: [
+  //                       ...activity.activityStatus.filter(
+  //                         (status) => status.date !== work.date
+  //                       ),
+  //                       {
+  //                         date: work.date,
+  //                         status: newStatus,
+  //                         comment: activity.activityStatus.find(
+  //                           (status) => status.date === work.date
+  //                         )?.comment,
+  //                       },
+  //                     ],
   //                   }
   //                 : activity
   //             ),
@@ -381,6 +401,9 @@ const SupervisionSheet: React.FC = () => {
   //     )
   //   );
 
+  //   const tempTransformedData = transformedData;
+
+  //   // Update transformedData as well
   //   setTransformedData((prevData) =>
   //     prevData.map((work) =>
   //       work.workId === workId
@@ -396,14 +419,57 @@ const SupervisionSheet: React.FC = () => {
   //     )
   //   );
 
-  //   console.log({ data, transformedData });
+  //   // const getNewActivities = data.find(
+  //   //   (work) => work.workId === workId
+  //   // )?.activities;
+
+  //   // if (!getNewActivities) {
+  //   //   toast({
+  //   //     description: "failed to update the activities",
+  //   //   });
+
+  //   //   setData(tempData);
+  //   //   setTransformedData(tempTransformedData);
+  //   //   return;
+  //   // }
+
+  //   // console.log({ getNewActivities });
+
+  //   console.log({ updatedData: data });
+
+  //   const getNewActivities = data.find(
+  //     (work) => work.workId === workId
+  //   )?.activities;
+  //   console.log({ getNewActivities });
+
+  //   Interceptor.handleApi(
+  //     async () =>
+  //       await Work.updateWorkActivities({
+  //         id: workId,
+  //         activities: getNewActivities || [],
+  //       }),
+
+  //     (res) => {
+  //       toast({
+  //         description: "updated the activites",
+  //       });
+  //     },
+  //     () => {
+  //       toast({
+  //         description: "failed to update the activities",
+  //       });
+
+  //       // setData(tempData);
+  //       // setTransformedData(tempTransformedData);
+  //     }
+  //   );
   // };
+
   const handleStatusChange = (
     workId: string,
     activityId: string,
     newStatus: string
   ) => {
-    console.log({ workId, activityId, newStatus });
     setData((prevData) =>
       prevData.map((work) =>
         work.workId === workId
@@ -413,18 +479,19 @@ const SupervisionSheet: React.FC = () => {
                 activity.activityId === activityId
                   ? {
                       ...activity,
-                      activityStatus: activity.activityStatus.some(
-                        (status) => status.date === work.date
-                      )
-                        ? activity.activityStatus.map((status) =>
-                            status.date === work.date
-                              ? { ...status, status: newStatus }
-                              : status
-                          )
-                        : [
-                            ...activity.activityStatus,
-                            { date: work.date, status: newStatus },
-                          ],
+                      activityStatus: [
+                        ...activity.activityStatus.filter(
+                          (status) => status.date !== work.date
+                        ),
+                        {
+                          date: work.date,
+                          status: newStatus,
+                          comment:
+                            activity.activityStatus.find(
+                              (status) => status.date === work.date
+                            )?.comment || "",
+                        },
+                      ],
                     }
                   : activity
               ),
@@ -432,6 +499,8 @@ const SupervisionSheet: React.FC = () => {
           : work
       )
     );
+
+    console.log({ updatedData: data });
 
     setTransformedData((prevData) =>
       prevData.map((work) =>
@@ -448,7 +517,29 @@ const SupervisionSheet: React.FC = () => {
       )
     );
 
-    console.log({ data, transformedData });
+    const getNewActivities = data.find(
+      (work) => work.workId === workId
+    )?.activities;
+
+    console.log({ getNewActivities });
+
+    Interceptor.handleApi(
+      async () =>
+        await Work.updateWorkActivities({
+          id: workId,
+          activities: getNewActivities || [],
+        }),
+      (res) => {
+        toast({
+          description: "updated the activities",
+        });
+      },
+      () => {
+        toast({
+          description: "failed to update the activities",
+        });
+      }
+    );
   };
 
   const handleCommentChange = (
@@ -456,6 +547,7 @@ const SupervisionSheet: React.FC = () => {
     activityId: string,
     newComment: string
   ) => {
+    const tempData = data;
     setData((prevData) =>
       prevData.map((work) =>
         work.workId === workId
@@ -465,11 +557,18 @@ const SupervisionSheet: React.FC = () => {
                 activity.activityId === activityId
                   ? {
                       ...activity,
-                      activityStatus: activity.activityStatus.map((status) =>
-                        status.date === work.date
-                          ? { ...status, comment: newComment }
-                          : status
-                      ),
+                      activityStatus: [
+                        ...activity.activityStatus.filter(
+                          (status) => status.date !== work.date
+                        ),
+                        {
+                          date: work.date,
+                          status: activity.activityStatus.find(
+                            (status) => status.date === work.date
+                          )?.status,
+                          comment: newComment,
+                        },
+                      ],
                     }
                   : activity
               ),
@@ -477,6 +576,8 @@ const SupervisionSheet: React.FC = () => {
           : work
       )
     );
+
+    const tempTransformedData = transformedData;
 
     setTransformedData((prevData) =>
       prevData.map((work) =>
@@ -492,7 +593,52 @@ const SupervisionSheet: React.FC = () => {
           : work
       )
     );
+
+    // const getNewActivities = data.find(
+    //   (work) => work.workId === workId
+    // )?.activities;
+
+    // if (!getNewActivities) {
+    //   toast({
+    //     description: "failed to update the activities",
+    //   });
+
+    //   setData(tempData);
+    //   setTransformedData(tempTransformedData);
+    //   return;
+    // }
+
+    const getNewActivities = data.filter((work) => work.workId === workId)[0]
+      .activities;
+
+    console.log({ getNewActivities });
+
+    Interceptor.handleApi(
+      async () =>
+        await Work.updateWorkActivities({
+          id: workId,
+          activities: getNewActivities,
+        }),
+
+      (res) => {
+        toast({
+          description: "updated the activites",
+        });
+      },
+      () => {
+        toast({
+          description: "failed to update the activities",
+        });
+
+        setData(tempData);
+        setTransformedData(tempTransformedData);
+      }
+    );
   };
+
+  if (data) {
+    console.log({ data });
+  }
 
   if (loading) {
     return <LoaderIcon className="animate-spin" />;
@@ -526,13 +672,17 @@ const SupervisionSheet: React.FC = () => {
                       <TableCell>
                         <Select
                           value={activity.status || ""}
-                          onValueChange={(value) =>
+                          onValueChange={(value) => {
+                            console.log(
+                              "Select onvaluechanged called with: ",
+                              value
+                            );
                             handleStatusChange(
                               work.workId,
                               activity.activityId,
                               value
-                            )
-                          }
+                            );
+                          }}
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Select..." />

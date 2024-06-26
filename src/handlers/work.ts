@@ -1,4 +1,5 @@
-import { del, get, post } from "@/lib/axios";
+import { Activity } from "@/components/core/SupervisionSheet";
+import { del, get, patch, post } from "@/lib/axios";
 import { LocalStorage } from "@/lib/localStorage";
 
 class Work {
@@ -52,6 +53,17 @@ class Work {
 
   static async getActivitiesByDate(date: string) {
     return get(`/work/activities?date=${date}`);
+  }
+
+  static async updateWorkActivities(params: {
+    id: string;
+    activities: Activity[];
+  }) {
+    const { id, activities } = params;
+
+    return patch(`/work/activities/${id}`, {
+      activities,
+    });
   }
 }
 export default Work;
